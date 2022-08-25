@@ -1,0 +1,25 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates a sample S3 bucket 
+Metadata: 
+
+Parameters: 
+
+Mappings: 
+
+Conditions: 
+
+Resources: 
+  MyS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      AccessControl: Private 
+      BucketName: MyS3Bucket
+      CorsConfiguration: 
+      LifecycleConfiguration: 
+      NotificationConfiguration: 
+      VersioningConfiguration: 
+      WebsiteConfiguration: 
+      Tags:
+        - Key: Name
+          Value: MyS3Bucket
+Outputs:
