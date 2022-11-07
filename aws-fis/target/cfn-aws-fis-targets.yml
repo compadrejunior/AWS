@@ -1,0 +1,89 @@
+
+Parameters:
+  AvailabilityZone:
+    Description: "Select Availability Zone for instances"
+    Type: AWS::EC2::AvailabilityZone::Name
+  
+  ImageID:
+    Description: "Select the image to launch"
+    Type: AWS::EC2::Image::Id
+  
+  InstanceType:
+    Description: "Select the instance type to launch"
+    Type: AWS::EC2::Instance::Id
+
+  AllowSSHCidrBlock:
+    Description: "Type the allowed CIDR block for SSH connection."
+    Type: String
+
+  MinSize:
+    Description: "Minimum size of instances for AutoScaling Group"
+    Type: Number
+  
+  MaxSize:
+    Description: "Maximum size of instances for AutoScaling Group"
+    Type: Number
+
+  KeyPair:
+    Description: "Select the instances key pair"
+    Type: AWS::EC2::KeyPair::KeyName
+
+Resources:
+  
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "AWS FIS Target Instances Security Group" # Required
+      GroupName: "aws-fis-target-instances-sg"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref AllowSSHCidrBlock
+      Tags:
+        - Key: "Name"
+          Value: "AWS FIS Target SG"
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        BlockDeviceMappings:
+          - DeviceName: "/dev/sda1"
+            Ebs:
+              VolumeSize: 8
+        DisableApiStop: false
+        DisableApiTermination: false
+        EbsOptimized: false
+        ImageId: !Ref ImageID
+        InstanceType: !Ref InstanceType
+        SecurityGroups:
+          - !Ref SecurityGroup
+      LaunchTemplateName: "AWS FIS Target Instance Launch Template"
+      TagSpecifications:
+          - Key: "Name"
+            Value: "AWS FIS Target Instance Launch Template"
+      KeyName: !Ref KeyPair
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: "asg-aws-fis-target-instances"
+      AvailabilityZones:
+        - !Ref AvailabilityZone
+      LaunchTemplate: !Ref LaunchTemplate
+      MaxSize: !Ref MaxSize # Required
+      MinSize: !Ref MinSize # Required
+      NewInstancesProtectedFromScaleIn: false
+      Tags:
+        - Key: "Name"
+          Value: "AWS FIS Target Instances Auto Scaling Group"
+      TerminationPolicies:
+        - Default
+
+Outputs:
+  LogicalID:
+    Description: 
+    Value:
+    Export: 
+      Name:
