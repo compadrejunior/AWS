@@ -60,11 +60,8 @@ Resources:
             sudo yum -y update
             sudo yum -y upgrade
 
-            # enable EPEL6 by changing enabled=0 -> enabled=1
-            sudo vim /etc/yum.repos.d/epel.repo
-
             # install htop
-            sudo yum install htop
+            sudo yum -y install htop
   AutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
     Properties:

@@ -1,0 +1,22 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": [
+                  "fis.amazonaws.com"
+                ]
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "aws:SourceAccount": "817488108053"
+                },
+                "ArnLike": {
+                    "aws:SourceArn": "arn:aws:fis:us-east-1:817488108053:experiment/*"
+                }
+            }
+        }
+    ]
+}
