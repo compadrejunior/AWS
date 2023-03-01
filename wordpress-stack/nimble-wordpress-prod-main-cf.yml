@@ -539,7 +539,6 @@ Resources:
           wordpress_install:
             - install_cfn
             - install_wordpress
-            - clone_repository
         install_cfn:
           files:
             /etc/cfn/cfn-hup.conf:
@@ -590,13 +589,19 @@ Resources:
         install_wordpress:
           packages:
             yum:
-              php73: []
-              php73-mysqlnd: []
+              amazon-linux-extras: []
               mysql57: []
               httpd24: []
-          sources:
-            /var/www/html: 'https://wordpress.org/wordpress-6.1.1.tar.gz'
+          # sources:
+          #   /var/www/html: 'https://wordpress.org/wordpress-6.1.1.tar.gz'
           files:
+            wordpress-6.1.1.tar.gz:
+              source: https://wordpress.org/wordpress-6.1.1.tar.gz
+              mode: "000644"
+              owner: root
+              group: root
+              files:
+                - wordpress/*.*: /var/www/html
             /tmp/create-wp-config:
               content: !Join 
                 - ''
@@ -626,10 +631,27 @@ Resources:
               mode: '000500'
               owner: root
               group: root
+            /tmp/php-install:
+              content: 
+                !Join 
+                - ''
+                - - |
+                    #!/bin/bash
+                  - >
+                    sudo amazon-linux-extras enable php8.1
+                  - |
+                    sudo yum clean metadata
+                  - |
+                    sudo yum install php php-mysqlnd -y
+              mode: '000500'
+              owner: root
+              group: root
           commands:
+            00_instal_php:
+              command: /tmp/php-install
             01_configure_wordpress:
               command: /tmp/create-wp-config
-              cwd: /var/www/html/wordpress
+              cwd: /var/www/html
           services:
             sysvinit:
               httpd:
