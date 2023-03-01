@@ -604,8 +604,7 @@ Resources:
           - Arch
       InstanceType: !Ref BastionInstanceType
       KeyName: !Ref KeyName
-      SecurityGroupIds:
-        - !Ref BastionHostSecurityGroup.GroupId
+      SecurityGroupIds: !GetAtt BastionHostSecurityGroup.GroupId
       SubnetId: !Ref BastionSubnet
       Tags:
         - Key: Name
@@ -628,7 +627,8 @@ Resources:
         - IpProtocol: tcp
           FromPort: '22'
           ToPort: '22'
-          SourceSecurityGroupId: BastionHostInstance.GroupId
+          SourceSecurityGroupId: 
+            - !GetAtt BastionHostSecurityGroup.GroupId
       VpcId: !Ref VpcId
   WebServerGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
