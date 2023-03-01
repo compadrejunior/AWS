@@ -604,8 +604,8 @@ Resources:
           - Arch
       InstanceType: !Ref BastionInstanceType
       KeyName: !Ref KeyName
-      SecurityGroups:
-        - !Ref BastionHostSecurityGroup
+      SecurityGroupIds:
+        - !Ref BastionHostSecurityGroup.GroupId
       SubnetId: !Ref BastionSubnet
       Tags:
         - Key: Name
