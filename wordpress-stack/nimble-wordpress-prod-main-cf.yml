@@ -9,6 +9,10 @@ Description: >-
   Amazon RDS database instance. You will be billed for the AWS resources used if
   you create a stack from this template.
 Parameters:
+  VolumeSize:
+    Type: Number
+    Default: 8
+    Description: The size of the EBS volume in GB
   VpcId:
     Type: 'AWS::EC2::VPC::Id'
     Description: VpcId of your existing Virtual Private Cloud (VPC)
@@ -774,6 +778,11 @@ Resources:
                 enabled: 'true'
                 ensureRunning: 'true'
     Properties:
+      BlockDeviceMappings:
+        - DeviceName: /dev/sda1
+          Ebs:
+            VolumeSize: !Ref VolumeSize
+            VolumeType: gp2
       ImageId: !FindInMap 
         - AWSRegionArch2AMI
         - !Ref 'AWS::Region'
