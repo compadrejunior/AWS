@@ -607,9 +607,6 @@ Resources:
       SecurityGroups:
         - !Ref BastionHostSecurityGroup
       SubnetId: !Ref BastionSubnet
-      NetworkInterfaces:
-        - AssociatePublicIpAddress: true
-          DeviceIndex: "0"
       Tags:
         - Key: Name
           Value: "Bastion for Nimble WordPress VPC"
