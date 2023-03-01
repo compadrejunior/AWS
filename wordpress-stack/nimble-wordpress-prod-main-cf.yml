@@ -546,12 +546,18 @@ Resources:
           ToPort: '443'
           CidrIp: 0.0.0.0/0
       VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: "nimble-wordpress-elb-sg"
   ApplicationLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Properties:
       SecurityGroups: 
         - !Ref ALBSecurityGroup
       Subnets: !Ref Subnets
+      Tags:
+        - Key: Name
+          Value: "nimble-wordpress-prod-elb"
   ALBListener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
@@ -590,6 +596,9 @@ Resources:
           ToPort: '22'
           CidrIp: !Ref SSHLocation
       VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: "nimble-wordpress-bastion-sg"
   BastionHostInstance:
     Type: AWS::EC2::Instance
     DeletionPolicy: Delete
@@ -608,7 +617,7 @@ Resources:
       SubnetId: !Ref BastionSubnet
       Tags:
         - Key: Name
-          Value: "Bastion for Nimble WordPress VPC"
+          Value: "nimble-wordpress-bastion-ec2"
   WebServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -630,6 +639,9 @@ Resources:
           SourceSecurityGroupId: 
             - !GetAtt BastionHostSecurityGroup.GroupId
       VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: "nimble-wordpress-server-sg"
   WebServerGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
@@ -825,6 +837,9 @@ Resources:
           ToPort: '3306'
           SourceSecurityGroupId: !Ref WebServerSecurityGroup
       VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: "nimble-wordpress-db-sg"
   DBSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
@@ -846,8 +861,9 @@ Resources:
           - GroupId
       DBSubnetGroupName:
         Ref: DBSubnetGroup
-  
-  
+      Tags:
+        - Key: Name
+          Value: "nimble-wordpress-mysql-rds"
 Outputs:
   WebsiteURL:
     Value: !Join 
